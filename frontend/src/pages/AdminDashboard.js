@@ -23,7 +23,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("token");
       const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 
-      const res = await axios.get("http://localhost:5000/api/foods", config);
+      const res = await axios.get("https://nexgen-yg2a.onrender.com/api/foods", config);
       let fetchedFoods = res.data?.data || res.data || [];
       
       // Map backend uploaded images safely
