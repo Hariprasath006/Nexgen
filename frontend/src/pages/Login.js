@@ -25,7 +25,7 @@ function Login() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/users/login", {
+      const res = await axios.post("https://nexgen-yg2a.onrender.com/api/users/login", {
         email,
         password
       });
