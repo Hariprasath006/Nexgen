@@ -26,7 +26,7 @@ function AdminOrders(){
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const res = await axios.put(`http://localhost:5000/api/orders/status/${orderId}`, { status: newStatus });
+      const res = await axios.put(`https://nexgen-yg2a.onrender.com/api/orders/status/${orderId}`, { status: newStatus });
       if(res.data.success) {
         toast.success("Order status updated!");
         fetchOrders();
