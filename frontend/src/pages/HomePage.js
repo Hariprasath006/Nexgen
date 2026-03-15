@@ -37,7 +37,7 @@ function HomePage({ cart, setCart, addToCart, updateCartQuantity, wishlist = [],
 
   const fetchFoods = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/foods");
+      const res = await axios.get("https://nexgen-yg2a.onrender.com/api/foods");
       let dbFoods = [];
       if (res.data && res.data.success) {
         dbFoods = res.data.data;
