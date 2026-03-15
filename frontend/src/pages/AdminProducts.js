@@ -13,7 +13,7 @@ fetchProducts();
 
 const fetchProducts = async()=>{
 
-const res = await axios.get("http://localhost:5000/api/foods");
+const res = await axios.get("https://nexgen-yg2a.onrender.com/api/foods");
 
 setProducts(res.data);
 
