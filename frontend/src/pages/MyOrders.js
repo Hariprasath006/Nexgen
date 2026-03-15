@@ -20,7 +20,7 @@ function MyOrders() {
       }
 
       try {
-        const res = await axios.get("http://localhost:5000/api/orders/myorders", {
+        const res = await axios.get("https://nexgen-yg2a.onrender.com/api/orders/myorders", {
           headers: { Authorization: `Bearer ${token}` }
         });
         
