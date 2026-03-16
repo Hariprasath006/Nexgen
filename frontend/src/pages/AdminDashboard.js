@@ -30,7 +30,7 @@ function AdminDashboard() {
       const mappedDbFoods = fetchedFoods.map(food => {
         let newImage = food.image;
         if (Array.isArray(newImage) && newImage[0] && typeof newImage[0] === 'string' && newImage[0].startsWith('uploads/')) {
-           newImage = [`http://localhost:5000/${newImage[0]}`];
+           newImage = [`https://nexgen-yg2a.onrender.com/${newImage[0]}`];
         } else if (typeof newImage === 'string' && newImage.startsWith('uploads/')) {
            newImage = `http://localhost:5000/${newImage}`;
         }
@@ -66,7 +66,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("token");
       const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
       
-      const res = await axios.put(`http://localhost:5000/api/foods/${editingFood._id}`, editForm, config);
+      const res = await axios.put(`https://nexgen-yg2a.onrender.com/api/foods/${editingFood._id}`, editForm, config);
       if (res.data.success) {
         toast.success("Product updated successfully!");
         setEditingFood(null);
