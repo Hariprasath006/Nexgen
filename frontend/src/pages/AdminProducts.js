@@ -21,7 +21,7 @@ setProducts(res.data);
 
 const deleteProduct = async(id)=>{
 
-await axios.delete("http://localhost:5000/api/foods/"+id);
+await axios.delete("https://nexgen-yg2a.onrender.com/api/foods/"+id);
 
 fetchProducts();
 
