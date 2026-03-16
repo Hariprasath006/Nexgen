@@ -28,14 +28,52 @@ cb(null, Date.now() + "-" + file.originalname);
 const upload = multer({ storage });
 
 /* ===========================
+HELPER FUNCTION
+Fix localhost image URLs
+=========================== */
+const fixImageUrl = (image) => {
+if (!image) return image;
+
+if (Array.isArray(image)) {
+return image.map((img) =>
+img.replace(
+"http://localhost:5000",
+"https://nexgen-yg2a.onrender.com"
+)
+);
+}
+
+return image.replace(
+"http://localhost:5000",
+"https://nexgen-yg2a.onrender.com"
+);
+};
+
+/* ===========================
 GET ALL FOODS
 =========================== */
 router.get("/", async (req, res) => {
 try {
+
+```
 const foods = await Food.find().sort({ createdAt: -1 });
-res.json({ success: true, data: foods });
+
+const fixedFoods = foods.map((food) => ({
+  ...food._doc,
+  image: fixImageUrl(food.image)
+}));
+
+res.json({
+  success: true,
+  data: fixedFoods
+});
+```
+
 } catch (error) {
-res.status(500).json({ success: false, message: error.message });
+res.status(500).json({
+success: false,
+message: error.message
+});
 }
 });
 
@@ -178,9 +216,14 @@ if (!food) {
   });
 }
 
+const fixedFood = {
+  ...food._doc,
+  image: fixImageUrl(food.image)
+};
+
 res.json({
   success: true,
-  data: food
+  data: fixedFood
 });
 ```
 
