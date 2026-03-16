@@ -68,7 +68,7 @@ function AddressPage({ cart, setCart }) {
       const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 
       const res = await axios.post(
-        "http://localhost:5000/api/orders/create",
+        "https://nexgen-yg2a.onrender.com/api/orders/create",
         {
           items: cart,
           totalPrice: finalTotal,
