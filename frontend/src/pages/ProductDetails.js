@@ -39,7 +39,7 @@ function ProductDetails({ cart, setCart, addToCart, updateCartQuantity, wishlist
       if (Array.isArray(newImage) && newImage[0] && typeof newImage[0] === 'string' && newImage[0].startsWith('uploads/')) {
          newImage = [`http://localhost:5000/${newImage[0]}`];
       } else if (typeof newImage === 'string' && newImage.startsWith('uploads/')) {
-         newImage = [`http://localhost:5000/${newImage}`];
+         newImage = [`https://nexgen-yg2a.onrender.com/${newImage}`];
       }
       const finalProduct = { ...dbProduct, image: Array.isArray(newImage) ? newImage : [newImage] };
       
