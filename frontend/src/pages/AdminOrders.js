@@ -9,7 +9,7 @@ function AdminOrders(){
   const [loading, setLoading] = useState(true);
 
   const fetchOrders = () => {
-    axios.get("http://localhost:5000/api/orders")
+    axios.get("https://nexgen-yg2a.onrender.com/api/orders")
       .then(res => {
         setOrders(res.data.data || res.data);
         setLoading(false);
