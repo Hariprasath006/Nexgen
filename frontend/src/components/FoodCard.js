@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FiHeart, FiStar, FiPlus, FiMinus } from "react-icons/fi";
 
+const API_URL = "https://nexgen-yg2a.onrender.com";
+
 function FoodCard({ food, cart = [], addToCart, updateCartQuantity, wishlist = [], toggleWishlist }) {
 
 const isWishlisted = wishlist.some(item => item._id === food._id);
@@ -12,11 +14,16 @@ food.image && Array.isArray(food.image) && food.image.length > 0
 ? food.image[0]
 : food.image;
 
+/* Fix uploads path coming from backend */
+if (imageUrl && imageUrl.startsWith("uploads/")) {
+imageUrl = `${API_URL}/${imageUrl}`;
+}
+
 /* Convert localhost URL to Render backend URL */
 if (imageUrl && imageUrl.includes("localhost:5000")) {
 imageUrl = imageUrl.replace(
 "http://localhost:5000",
-"https://nexgen-yg2a.onrender.com"
+API_URL
 );
 }
 
@@ -58,128 +65,126 @@ e.preventDefault();
 if (toggleWishlist) toggleWishlist(food);
 };
 
-return ( <div className="product-card">
+return (
+<div className="product-card">
 
-```
-  <div className="wishlist-icon" onClick={handleWishlistClick}>
-    <FiHeart
-      size={22}
-      color={isWishlisted ? "var(--secondary)" : "var(--text-light)"}
-      fill={isWishlisted ? "var(--secondary)" : "none"}
-    />
-  </div>
+<div className="wishlist-icon" onClick={handleWishlistClick}>
+<FiHeart
+size={22}
+color={isWishlisted ? "var(--secondary)" : "var(--text-light)"}
+fill={isWishlisted ? "var(--secondary)" : "none"}
+/>
+</div>
 
-  {discountPercent > 0 && !isOutOfStock && (
-    <div className="discount-badge">
-      {discountPercent}% OFF
-    </div>
-  )}
+{discountPercent > 0 && !isOutOfStock && (
+<div className="discount-badge">
+{discountPercent}% OFF
+</div>
+)}
 
-  {isOutOfStock && (
-    <div className="discount-badge" style={{ background: "#B12704" }}>
-      OUT OF STOCK
-    </div>
-  )}
+{isOutOfStock && (
+<div className="discount-badge" style={{ background: "#B12704" }}>
+OUT OF STOCK
+</div>
+)}
 
-  <Link
-    to={`/product/${food._id}`}
-    className="product-img-wrapper"
-    style={{ cursor: "pointer" }}
-  >
-    <img
-      src={imageUrl}
-      alt={food.name}
-      className="product-img"
-      loading="lazy"
-    />
-  </Link>
+<Link
+to={`/product/${food._id}`}
+className="product-img-wrapper"
+style={{ cursor: "pointer" }}
+>
+<img
+src={imageUrl}
+alt={food.name}
+className="product-img"
+loading="lazy"
+/>
+</Link>
 
-  <div className="product-info">
+<div className="product-info">
 
-    <Link to={`/product/${food._id}`} style={{ textDecoration: "none" }}>
-      <h3 className="product-title" title={food.name}>
-        {food.name}
-      </h3>
-    </Link>
+<Link to={`/product/${food._id}`} style={{ textDecoration: "none" }}>
+<h3 className="product-title" title={food.name}>
+{food.name}
+</h3>
+</Link>
 
-    <div className="product-rating">
-      <span className="stars">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <FiStar
-            key={star}
-            size={14}
-            color={
-              star <= Math.round(rating)
-                ? "var(--secondary)"
-                : "#ccc"
-            }
-            fill={
-              star <= Math.round(rating)
-                ? "var(--secondary)"
-                : "none"
-            }
-          />
-        ))}
-      </span>
-      <span className="review-count">{numReviews}</span>
-    </div>
+<div className="product-rating">
+<span className="stars">
+{[1, 2, 3, 4, 5].map((star) => (
+<FiStar
+key={star}
+size={14}
+color={
+star <= Math.round(rating)
+? "var(--secondary)"
+: "#ccc"
+}
+fill={
+star <= Math.round(rating)
+? "var(--secondary)"
+: "none"
+}
+/>
+))}
+</span>
+<span className="review-count">{numReviews}</span>
+</div>
 
-    <div className="price-container">
-      <span className="offer-price">₹{offerPrice}</span>
-      {discountPercent > 0 && (
-        <span className="original-price">
-          M.R.P: ₹{originalPrice}
-        </span>
-      )}
-    </div>
+<div className="price-container">
+<span className="offer-price">₹{offerPrice}</span>
+{discountPercent > 0 && (
+<span className="original-price">
+M.R.P: ₹{originalPrice}
+</span>
+)}
+</div>
 
-    <div
-      className="product-actions"
-      style={{ opacity: isOutOfStock ? 0.6 : 1 }}
-    >
+<div
+className="product-actions"
+style={{ opacity: isOutOfStock ? 0.6 : 1 }}
+>
 
-      {cartItem ? (
-        <div className="qty-controls">
+{cartItem ? (
+<div className="qty-controls">
 
-          <button
-            className="qty-btn"
-            onClick={() => updateCartQuantity(food._id, -1)}
-            disabled={cartItem.qty <= 1}
-          >
-            <FiMinus size={16} />
-          </button>
+<button
+className="qty-btn"
+onClick={() => updateCartQuantity(food._id, -1)}
+disabled={cartItem.qty <= 1}
+>
+<FiMinus size={16} />
+</button>
 
-          <span className="qty-value">{cartItem.qty}</span>
+<span className="qty-value">{cartItem.qty}</span>
 
-          <button
-            className="qty-btn"
-            onClick={() => updateCartQuantity(food._id, 1)}
-            disabled={isOutOfStock}
-          >
-            <FiPlus size={16} />
-          </button>
-
-        </div>
-      ) : (
-        <button
-          className="cart-btn"
-          onClick={() => !isOutOfStock && addToCart(food)}
-          disabled={isOutOfStock}
-          style={{
-            cursor: isOutOfStock ? "not-allowed" : "pointer",
-          }}
-        >
-          {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-        </button>
-      )}
-
-    </div>
-
-  </div>
+<button
+className="qty-btn"
+onClick={() => updateCartQuantity(food._id, 1)}
+disabled={isOutOfStock}
+>
+<FiPlus size={16} />
+</button>
 
 </div>
-```
+) : (
+<button
+className="cart-btn"
+onClick={() => !isOutOfStock && addToCart(food)}
+disabled={isOutOfStock}
+style={{
+cursor: isOutOfStock ? "not-allowed" : "pointer",
+}}
+>
+{isOutOfStock ? "Out of Stock" : "Add to Cart"}
+</button>
+)}
 
+</div>
+
+</div>
+
+</div>
 );
 }
 
