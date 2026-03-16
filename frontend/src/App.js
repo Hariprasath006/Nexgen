@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -20,32 +21,53 @@ import AdminLogin from "./pages/AdminLogin";
 
 function App() {
 
-  /* GET LOGGED USER */
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-
-  const [user, setUser] = useState(storedUser);
-
-  /* CART PER USER */
-  const [cart, setCart] = useState(
-    storedUser
-      ? JSON.parse(localStorage.getItem(`cart_${storedUser._id}`)) || []
-      : []
+  /* USER STATE */
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("user"))
   );
 
-  /* WISHLIST PER USER */
-  const [wishlist, setWishlist] = useState(
-    storedUser
-      ? JSON.parse(localStorage.getItem(`wishlist_${storedUser._id}`)) || []
-      : []
-  );
+  /* CART STATE (PER USER) */
+  const [cart, setCart] = useState([]);
 
-  /* LOAD FROM BACKEND WHEN USER LOGIN */
+  /* WISHLIST STATE (PER USER) */
+  const [wishlist, setWishlist] = useState([]);
+
+  /* LOAD USER CART & WISHLIST WHEN USER CHANGES */
   useEffect(() => {
+
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (storedUser) {
+
+      setUser(storedUser);
+
+      const savedCart =
+        JSON.parse(localStorage.getItem(`cart_${storedUser._id}`)) || [];
+
+      const savedWishlist =
+        JSON.parse(localStorage.getItem(`wishlist_${storedUser._id}`)) || [];
+
+      setCart(savedCart);
+      setWishlist(savedWishlist);
+
+    } else {
+
+      setCart([]);
+      setWishlist([]);
+
+    }
+
+  }, []);
+
+  /* FETCH USER DATA FROM BACKEND */
+  useEffect(() => {
+
     const fetchUserData = async () => {
 
       const token = localStorage.getItem("token");
 
       if (token && user) {
+
         try {
 
           const res = await axios.get(
@@ -57,28 +79,32 @@ function App() {
 
           if (res.data.success) {
 
-            if (res.data.data.cart) {
-              setCart(res.data.data.cart);
-              localStorage.setItem(
-                `cart_${user._id}`,
-                JSON.stringify(res.data.data.cart)
-              );
-            }
+            const serverCart = res.data.data.cart || [];
+            const serverWishlist = res.data.data.wishlist || [];
 
-            if (res.data.data.wishlist) {
-              setWishlist(res.data.data.wishlist);
-              localStorage.setItem(
-                `wishlist_${user._id}`,
-                JSON.stringify(res.data.data.wishlist)
-              );
-            }
+            setCart(serverCart);
+            setWishlist(serverWishlist);
+
+            localStorage.setItem(
+              `cart_${user._id}`,
+              JSON.stringify(serverCart)
+            );
+
+            localStorage.setItem(
+              `wishlist_${user._id}`,
+              JSON.stringify(serverWishlist)
+            );
 
           }
 
         } catch (error) {
-          console.error("Failed to fetch user data", error);
+
+          console.error("User profile fetch failed", error);
+
         }
+
       }
+
     };
 
     fetchUserData();
@@ -89,7 +115,12 @@ function App() {
   useEffect(() => {
 
     if (user) {
-      localStorage.setItem(`cart_${user._id}`, JSON.stringify(cart));
+
+      localStorage.setItem(
+        `cart_${user._id}`,
+        JSON.stringify(cart)
+      );
+
     }
 
     const token = localStorage.getItem("token");
@@ -102,7 +133,7 @@ function App() {
         {
           headers: { Authorization: `Bearer ${token}` }
         }
-      ).catch(err => console.error("Cart sync failed", err));
+      ).catch(() => {});
 
     }
 
@@ -112,7 +143,12 @@ function App() {
   useEffect(() => {
 
     if (user) {
-      localStorage.setItem(`wishlist_${user._id}`, JSON.stringify(wishlist));
+
+      localStorage.setItem(
+        `wishlist_${user._id}`,
+        JSON.stringify(wishlist)
+      );
+
     }
 
     const token = localStorage.getItem("token");
@@ -125,18 +161,40 @@ function App() {
         {
           headers: { Authorization: `Bearer ${token}` }
         }
-      ).catch(err => console.error("Wishlist sync failed", err));
+      ).catch(() => {});
 
     }
 
   }, [wishlist, user]);
 
+  /* ADD TO CART */
+  const addToCart = (product) => {
+
+    setCart(prev => {
+
+      const existing = prev.find(i => i._id === product._id);
+
+      if (existing) {
+
+        return prev.map(i =>
+          i._id === product._id
+            ? { ...i, qty: i.qty + 1 }
+            : i
+        );
+
+      }
+
+      return [...prev, { ...product, qty: 1 }];
+
+    });
+
+  };
+
   /* UPDATE CART QTY */
   const updateCartQuantity = (id, amount) => {
 
-    setCart((prevCart) => {
-
-      return prevCart.map((item) => {
+    setCart(prev =>
+      prev.map(item => {
 
         if (item._id === id) {
 
@@ -151,64 +209,34 @@ function App() {
 
         return item;
 
-      });
-
-    });
-
-  };
-
-  /* REMOVE CART ITEM */
-  const removeFromCart = (id) => {
-
-    setCart((prevCart) =>
-      prevCart.filter((item) => item._id !== id)
+      })
     );
 
   };
 
-  /* ADD TO CART */
-  const addToCart = (product) => {
+  /* REMOVE ITEM */
+  const removeFromCart = (id) => {
 
-    setCart((prevCart) => {
-
-      const existing = prevCart.find(
-        (item) => item._id === product._id
-      );
-
-      if (existing) {
-
-        return prevCart.map((item) =>
-          item._id === product._id
-            ? { ...item, qty: item.qty + 1 }
-            : item
-        );
-
-      }
-
-      return [...prevCart, { ...product, qty: 1 }];
-
-    });
+    setCart(prev =>
+      prev.filter(item => item._id !== id)
+    );
 
   };
 
   /* TOGGLE WISHLIST */
   const toggleWishlist = (product) => {
 
-    setWishlist((prevWishlist) => {
+    setWishlist(prev => {
 
-      const exists = prevWishlist.find(
-        (item) => item._id === product._id
-      );
+      const exists = prev.find(i => i._id === product._id);
 
       if (exists) {
 
-        return prevWishlist.filter(
-          (item) => item._id !== product._id
-        );
+        return prev.filter(i => i._id !== product._id);
 
       }
 
-      return [...prevWishlist, product];
+      return [...prev, product];
 
     });
 
@@ -218,13 +246,7 @@ function App() {
 
     <BrowserRouter>
 
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        closeOnClick
-        pauseOnHover
-      />
+      <ToastContainer position="top-right" autoClose={3000} />
 
       <Routes>
 
@@ -306,12 +328,7 @@ function App() {
 
         <Route
           path="/address"
-          element={
-            <AddressPage
-              cart={cart}
-              setCart={setCart}
-            />
-          }
+          element={<AddressPage cart={cart} setCart={setCart} />}
         />
 
         <Route path="/orders" element={<MyOrders />} />
