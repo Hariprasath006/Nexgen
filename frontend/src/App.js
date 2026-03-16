@@ -36,7 +36,7 @@ function App() {
       const token = localStorage.getItem("token");
       if (token && user) {
         try {
-          const res = await axios.get("http://localhost:5000/api/users/profile", {
+          const res = await axios.get("https://nexgen-yg2a.onrender.com/api/users/profile", {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (res.data.success) {
@@ -63,7 +63,7 @@ function App() {
     localStorage.setItem("cart", JSON.stringify(cart));
     const token = localStorage.getItem("token");
     if (token && user) {
-      axios.put("http://localhost:5000/api/users/sync-cart", { cart }, {
+      axios.put("https://nexgen-yg2a.onrender.com/api/users/sync-cart", { cart }, {
         headers: { Authorization: `Bearer ${token}` }
       }).catch(err => console.error("Cart sync failed", err));
     }
@@ -74,7 +74,7 @@ function App() {
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
     const token = localStorage.getItem("token");
     if (token && user) {
-      axios.put("http://localhost:5000/api/users/sync-wishlist", { wishlist }, {
+      axios.put("https://nexgen-yg2a.onrender.com/api/users/sync-wishlist", { wishlist }, {
         headers: { Authorization: `Bearer ${token}` }
       }).catch(err => console.error("Wishlist sync failed", err));
     }
