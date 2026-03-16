@@ -37,7 +37,7 @@ function AdminAddProduct() {
       const token = localStorage.getItem("token");
       const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 
-      const res = await axios.post("http://localhost:5000/api/foods", formData, config);
+      const res = await axios.post("https://nexgen-yg2a.onrender.com/api/foods", formData, config);
 
       if (res.data.success) {
         toast.success("Product Added Successfully");
