@@ -33,18 +33,33 @@ FIX IMAGE URL FUNCTION
 =========================== */
 function fixImageUrl(image) {
 
-if (!image) return image;
+  if (!image) return image;
 
-if (Array.isArray(image)) {
-return image.map((img) => {
-if (typeof img === "string") {
-return img.replace(
-"http://localhost:5000",
-"https://nexgen-yg2a.onrender.com"
-);
-}
-return img;
-});
+  // if image is array
+  if (Array.isArray(image)) {
+    return image.map((img) => {
+
+      if (typeof img === "string") {
+        return img.replace(
+          "http://localhost:5000",
+          "https://nexgen-yg2a.onrender.com"
+        );
+      }
+
+      return img;
+
+    });
+  }
+
+  // if image is string
+  if (typeof image === "string") {
+    return image.replace(
+      "http://localhost:5000",
+      "https://nexgen-yg2a.onrender.com"
+    );
+  }
+
+  return image;
 }
 
 if (typeof image === "string") {
