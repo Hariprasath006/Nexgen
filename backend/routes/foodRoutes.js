@@ -6,9 +6,10 @@ const fs = require("fs");
 const path = require("path");
 
 /* ===========================
-ENSURE UPLOADS DIRECTORY EXISTS
+UPLOADS FOLDER CHECK
 =========================== */
 const uploadDir = path.join(__dirname, "../uploads");
+
 if (!fs.existsSync(uploadDir)) {
 fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -28,26 +29,33 @@ cb(null, Date.now() + "-" + file.originalname);
 const upload = multer({ storage });
 
 /* ===========================
-HELPER FUNCTION
-Fix localhost image URLs
+FIX IMAGE URL FUNCTION
 =========================== */
-const fixImageUrl = (image) => {
+function fixImageUrl(image) {
+
 if (!image) return image;
 
 if (Array.isArray(image)) {
-return image.map((img) =>
-img.replace(
+return image.map((img) => {
+if (typeof img === "string") {
+return img.replace(
 "http://localhost:5000",
 "https://nexgen-yg2a.onrender.com"
-)
 );
 }
+return img;
+});
+}
 
+if (typeof image === "string") {
 return image.replace(
 "http://localhost:5000",
 "https://nexgen-yg2a.onrender.com"
 );
-};
+}
+
+return image;
+}
 
 /* ===========================
 GET ALL FOODS
@@ -58,10 +66,11 @@ try {
 ```
 const foods = await Food.find().sort({ createdAt: -1 });
 
-const fixedFoods = foods.map((food) => ({
-  ...food._doc,
-  image: fixImageUrl(food.image)
-}));
+const fixedFoods = foods.map((food) => {
+  const obj = food.toObject();
+  obj.image = fixImageUrl(obj.image);
+  return obj;
+});
 
 res.json({
   success: true,
@@ -70,10 +79,16 @@ res.json({
 ```
 
 } catch (error) {
+
+```
+console.error("GET FOODS ERROR:", error);
+
 res.status(500).json({
-success: false,
-message: error.message
+  success: false,
+  message: error.message
 });
+```
+
 }
 });
 
@@ -111,10 +126,16 @@ res.status(201).json({
 ```
 
 } catch (error) {
+
+```
+console.error("ADD FOOD ERROR:", error);
+
 res.status(500).json({
-success: false,
-message: error.message
+  success: false,
+  message: error.message
 });
+```
+
 }
 });
 
@@ -161,10 +182,16 @@ res.json({
 ```
 
 } catch (error) {
+
+```
+console.error("UPDATE FOOD ERROR:", error);
+
 res.status(500).json({
-success: false,
-message: error.message
+  success: false,
+  message: error.message
 });
+```
+
 }
 });
 
@@ -193,10 +220,16 @@ res.json({
 ```
 
 } catch (error) {
+
+```
+console.error("DELETE FOOD ERROR:", error);
+
 res.status(500).json({
-success: false,
-message: error.message
+  success: false,
+  message: error.message
 });
+```
+
 }
 });
 
@@ -216,22 +249,26 @@ if (!food) {
   });
 }
 
-const fixedFood = {
-  ...food._doc,
-  image: fixImageUrl(food.image)
-};
+const obj = food.toObject();
+obj.image = fixImageUrl(obj.image);
 
 res.json({
   success: true,
-  data: fixedFood
+  data: obj
 });
 ```
 
 } catch (error) {
+
+```
+console.error("GET SINGLE FOOD ERROR:", error);
+
 res.status(500).json({
-success: false,
-message: error.message
+  success: false,
+  message: error.message
 });
+```
+
 }
 });
 
