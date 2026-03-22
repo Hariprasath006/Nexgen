@@ -35,29 +35,29 @@ function Footer() {
           <div>
             <h4 style={{ marginBottom: '15px', color: 'white', fontSize: '16px' }}>Get to Know Us</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, lineHeight: '2' }}>
-              <li><Link to="/" style={{ color: '#e2e8f0', fontSize: '14px' }}>About Us</Link></li>
-              <li><Link to="/" style={{ color: '#e2e8f0', fontSize: '14px' }}>Careers</Link></li>
-              <li><Link to="/" style={{ color: '#e2e8f0', fontSize: '14px' }}>Press Releases</Link></li>
-              <li><Link to="/" style={{ color: '#e2e8f0', fontSize: '14px' }}>FreshShop Science</Link></li>
+              <li><Link to="/about-us" style={{ color: '#e2e8f0', fontSize: '14px' }}>About Us</Link></li>
+              <li><Link to="/careers" style={{ color: '#e2e8f0', fontSize: '14px' }}>Careers</Link></li>
+              <li><Link to="/press-releases" style={{ color: '#e2e8f0', fontSize: '14px' }}>Press Releases</Link></li>
+              <li><Link to="/freshshop-science" style={{ color: '#e2e8f0', fontSize: '14px' }}>FreshShop Science</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 style={{ marginBottom: '15px', color: 'white', fontSize: '16px' }}>Connect with Us</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, lineHeight: '2' }}>
-              <li><Link to="/" style={{ color: '#ddd', fontSize: '14px' }}>Facebook</Link></li>
-              <li><Link to="/" style={{ color: '#ddd', fontSize: '14px' }}>Twitter</Link></li>
-              <li><Link to="/" style={{ color: '#ddd', fontSize: '14px' }}>Instagram</Link></li>
+              <li><a href="https://facebook.com" target="_blank" rel="noreferrer" style={{ color: '#ddd', fontSize: '14px' }}>Facebook</a></li>
+              <li><a href="https://twitter.com" target="_blank" rel="noreferrer" style={{ color: '#ddd', fontSize: '14px' }}>Twitter</a></li>
+              <li><a href="https://instagram.com" target="_blank" rel="noreferrer" style={{ color: '#ddd', fontSize: '14px' }}>Instagram</a></li>
             </ul>
           </div>
 
           <div>
             <h4 style={{ marginBottom: '15px', color: 'white', fontSize: '16px' }}>Make Money with Us</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, lineHeight: '2' }}>
-              <li><Link to="/" style={{ color: '#e2e8f0', fontSize: '14px' }}>Sell on FreshShop</Link></li>
-              <li><Link to="/" style={{ color: '#e2e8f0', fontSize: '14px' }}>Protect and Build Your Brand</Link></li>
-              <li><Link to="/" style={{ color: '#e2e8f0', fontSize: '14px' }}>Global Selling</Link></li>
-              <li><Link to="/" style={{ color: '#e2e8f0', fontSize: '14px' }}>Become an Affiliate</Link></li>
+              <li><Link to="/sell-on-freshshop" style={{ color: '#e2e8f0', fontSize: '14px' }}>Sell on FreshShop</Link></li>
+              <li><Link to="/protect-and-build-your-brand" style={{ color: '#e2e8f0', fontSize: '14px' }}>Protect and Build Your Brand</Link></li>
+              <li><Link to="/global-selling" style={{ color: '#e2e8f0', fontSize: '14px' }}>Global Selling</Link></li>
+              <li><Link to="/become-an-affiliate" style={{ color: '#e2e8f0', fontSize: '14px' }}>Become an Affiliate</Link></li>
             </ul>
           </div>
 
@@ -65,8 +65,8 @@ function Footer() {
             <h4 style={{ marginBottom: '15px', color: 'white', fontSize: '16px' }}>Let Us Help You</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, lineHeight: '2' }}>
               <li><Link to="/orders" style={{ color: '#ddd', fontSize: '14px' }}>Your Account</Link></li>
-              <li><Link to="/orders" style={{ color: '#ddd', fontSize: '14px' }}>Returns Centre</Link></li>
-              <li><Link to="/" style={{ color: '#ddd', fontSize: '14px' }}>100% Purchase Protection</Link></li>
+              <li><Link to="/returns-centre" style={{ color: '#ddd', fontSize: '14px' }}>Returns Centre</Link></li>
+              <li><Link to="/100-purchase-protection" style={{ color: '#ddd', fontSize: '14px' }}>100% Purchase Protection</Link></li>
               <li><Link to="/help" style={{ color: '#ddd', fontSize: '14px' }}>Help</Link></li>
             </ul>
           </div>

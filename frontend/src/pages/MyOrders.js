@@ -9,6 +9,7 @@ import { FiPackage, FiTruck, FiCheckCircle, FiClock } from "react-icons/fi";
 function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [trackingOrder, setTrackingOrder] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,10 +64,7 @@ function MyOrders() {
 
   const handleTrackPackage = (orderId) => {
     const displayId = orderId && typeof orderId === 'string' ? orderId.substring(Math.max(0, orderId.length - 6)) : 'NEW';
-    toast.info(`Fetching live tracking for Order #${displayId}...`, { autoClose: 2000 });
-    setTimeout(() => {
-      toast.success(`Package is currently in transit to you!`);
-    }, 2000);
+    setTrackingOrder(displayId);
   };
 
   return (
@@ -174,6 +172,51 @@ function MyOrders() {
             })}
           </div>
         )}
+
+      {trackingOrder && (
+        <div className="tracking-modal-overlay" style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.5)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center'}}>
+          <div className="tracking-modal-content" style={{background:'white', width:'90%', maxWidth:'450px', borderRadius:'12px', padding:'30px', position:'relative', boxShadow:'0 10px 25px rgba(0,0,0,0.2)'}}>
+            <button style={{position:'absolute', top:'15px', right:'15px', background:'none', border:'none', fontSize:'24px', cursor:'pointer', color:'#888', padding:0}} onClick={() => setTrackingOrder(null)}>×</button>
+            <h2 style={{marginBottom:'20px', fontFamily:"'Outfit', sans-serif", color:'var(--text-dark)'}}>Track Package</h2>
+            
+            <div style={{color:'var(--text-light)', marginBottom:'25px', fontSize:'14px'}}>
+              Order #{trackingOrder}<br/>
+              Expected Delivery: <strong style={{color:'var(--primary)'}}>Tomorrow by 9:00 PM</strong>
+            </div>
+
+            <div className="tracking-vertical-timeline" style={{borderLeft:'3px solid var(--primary-light)', marginLeft:'15px', paddingLeft:'25px'}}>
+              <div style={{position:'relative', marginBottom:'30px'}}>
+                <div style={{position:'absolute', left:'-35px', top:'2px', width:'18px', height:'18px', borderRadius:'50%', background:'var(--primary)', border:'3px solid white', boxShadow:'0 0 0 2px var(--primary)'}}></div>
+                <h4 style={{margin:0, color:'var(--text-dark)', fontSize:'15px'}}>Ordered & Processed</h4>
+                <p style={{margin:'4px 0 0 0', color:'var(--text-light)', fontSize:'13px'}}>Seller has processed your order.</p>
+              </div>
+
+              <div style={{position:'relative', marginBottom:'30px'}}>
+                <div style={{position:'absolute', left:'-35px', top:'2px', width:'18px', height:'18px', borderRadius:'50%', background:'var(--primary)', border:'3px solid white', boxShadow:'0 0 0 2px var(--primary)'}}></div>
+                <h4 style={{margin:0, color:'var(--text-dark)', fontSize:'15px'}}>Shipped</h4>
+                <p style={{margin:'4px 0 0 0', color:'var(--text-light)', fontSize:'13px'}}>Package arrived at regional sorting facility.</p>
+              </div>
+
+              <div style={{position:'relative', marginBottom:'30px'}}>
+                <div style={{position:'absolute', left:'-35px', top:'2px', width:'18px', height:'18px', borderRadius:'50%', background:'var(--secondary)', border:'3px solid white', boxShadow:'0 0 0 2px var(--secondary)'}}></div>
+                <h4 style={{margin:0, color:'var(--text-dark)', fontSize:'15px'}}>Out for Delivery</h4>
+                <p style={{margin:'4px 0 0 0', color:'var(--text-light)', fontSize:'13px'}}>Your package is with the delivery agent.</p>
+              </div>
+
+              <div style={{position:'relative'}}>
+                <div style={{position:'absolute', left:'-35px', top:'2px', width:'18px', height:'18px', borderRadius:'50%', background:'#e2e8f0', border:'3px solid white'}}></div>
+                <h4 style={{margin:0, color:'#94a3b8', fontSize:'15px'}}>Delivered</h4>
+                <p style={{margin:'4px 0 0 0', color:'#94a3b8', fontSize:'13px'}}>Pending final delivery.</p>
+              </div>
+            </div>
+            
+            <div style={{marginTop:'35px', textAlign:'center'}}>
+              <button className="btn-secondary" style={{width:'100%', padding:'10px', borderRadius:'var(--radius-pill)', fontWeight:'bold'}} onClick={() => setTrackingOrder(null)}>Close Map Tracker</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       </div>
       <Footer />
     </>
