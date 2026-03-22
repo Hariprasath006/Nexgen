@@ -32,7 +32,7 @@ function Login() {
 
       if (res.data.success) {
         localStorage.setItem("user", JSON.stringify(res.data.data));
-        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("token", res.data.data.token);
         
         toast.success("Login successful!");
         // Hard reload strictly forces App.js to reconstruct the user's specific cart and clears guests
