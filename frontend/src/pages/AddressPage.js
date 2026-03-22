@@ -56,6 +56,13 @@ function AddressPage({ cart, setCart }) {
 
     if (!validateForm()) return;
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to complete your checkout.");
+      navigate("/login");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -64,8 +71,7 @@ function AddressPage({ cart, setCart }) {
       const delivery = subtotal > 500 ? 0 : 40;
       const finalTotal = subtotal + tax + delivery;
 
-      const token = localStorage.getItem("token");
-      const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+      const config = { headers: { Authorization: `Bearer ${token}` } };
 
       const res = await axios.post(
         "https://nexgen-yg2a.onrender.com/api/orders/create",
@@ -88,7 +94,14 @@ function AddressPage({ cart, setCart }) {
       }
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || "Error placing order");
+      if (error.response && error.response.status === 401) {
+         toast.error("Your session expired. Please login again.");
+         localStorage.removeItem("token");
+         localStorage.removeItem("user");
+         navigate("/login");
+      } else {
+         toast.error(error.response?.data?.message || "Error placing order");
+      }
     } finally {
       setLoading(false);
     }
