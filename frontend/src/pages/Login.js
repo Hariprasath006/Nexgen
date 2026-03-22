@@ -32,10 +32,11 @@ function Login() {
 
       if (res.data.success) {
         localStorage.setItem("user", JSON.stringify(res.data.data));
-        localStorage.setItem("token", res.data.data.token);
+        localStorage.setItem("token", res.data.token);
         
-        toast.success("Login Successful!");
-        navigate(redirect);
+        toast.success("Login successful!");
+        // Hard reload strictly forces App.js to reconstruct the user's specific cart and clears guests
+        window.location.href = redirect;
       } else {
         toast.error(res.data.message || "Invalid credentials");
       }

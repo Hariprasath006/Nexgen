@@ -36,7 +36,8 @@ function AdminLogin() {
         localStorage.setItem("token", res.data.data.token);
         
         toast.success("Admin Login Successful!");
-        navigate("/admin-dashboard");
+        // Hard reload prevents admin from pulling guest or previous user carts
+        window.location.href = "/admin-dashboard";
       } else {
         toast.error(res.data.message || "Invalid credentials");
       }

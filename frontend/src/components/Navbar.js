@@ -15,7 +15,8 @@ function Navbar({ cartCount = 0, wishlistCount = 0 }) {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setIsProfileOpen(false);
-    navigate("/login");
+    // Force a hard reload to clear the App.js global cart/wishlist cache
+    window.location.href = "/login";
   };
 
   const handleSearch = (e) => {
