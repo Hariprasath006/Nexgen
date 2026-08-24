@@ -4,188 +4,304 @@ import { FiHeart, FiStar, FiPlus, FiMinus } from "react-icons/fi";
 
 const API_URL = "https://nexgen-yg2a.onrender.com";
 
-function FoodCard({ food, cart = [], addToCart, updateCartQuantity, wishlist = [], toggleWishlist }) {
+function FoodCard({
+  food,
+  cart = [],
+  addToCart,
+  updateCartQuantity,
+  wishlist = [],
+  toggleWishlist,
+}) {
+  const isWishlisted = wishlist.some(
+    (item) => item._id === food._id
+  );
 
-const isWishlisted = wishlist.some(item => item._id === food._id);
+  /* ============================= */
+  /* IMAGE URL */
+  /* ============================= */
 
-/* FIX IMAGE URL FROM DATABASE */
-let imageUrl =
-food.image && Array.isArray(food.image) && food.image.length > 0
-? food.image[0]
-: food.image;
+  let imageUrl = "";
 
-/* Fix uploads path coming from backend */
-if (imageUrl && imageUrl.startsWith("uploads/")) {
-imageUrl = `${API_URL}/${imageUrl}`;
-}
+  if (Array.isArray(food.image)) {
+    imageUrl = food.image[0] || "";
+  } else {
+    imageUrl = food.image || "";
+  }
 
-/* Convert localhost URL to Render backend URL */
-if (imageUrl && imageUrl.includes("localhost:5000")) {
-imageUrl = imageUrl.replace(
-"http://localhost:5000",
-API_URL
-);
-}
+  if (imageUrl) {
+    // Already a complete URL
+    if (
+      imageUrl.startsWith("http://") ||
+      imageUrl.startsWith("https://")
+    ) {
+      // Convert old localhost URL to Render
+      if (imageUrl.includes("localhost:5000")) {
+        imageUrl = imageUrl.replace(
+          "http://localhost:5000",
+          API_URL
+        );
+      }
+    } else {
+      // Remove leading slash
+      imageUrl = imageUrl.replace(/^\/+/, "");
 
-/* Fallback image if image missing */
-if (!imageUrl) {
-imageUrl =
-"https://images.unsplash.com/photo-1542838132-92c53300491e?w=500";
-}
+      // Remove "backend/" if it exists
+      imageUrl = imageUrl.replace(/^backend\//, "");
 
-const cartItem = cart.find(item => item._id === food._id);
+      // Add Render backend URL
+      imageUrl = `${API_URL}/${imageUrl}`;
+    }
+  }
 
-const originalPrice = food.price || 0;
-const offerPrice = food.offerPrice || originalPrice;
+  /* Fallback image */
+  if (!imageUrl) {
+    imageUrl =
+      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=500";
+  }
 
-const discountPercent =
-originalPrice > offerPrice
-? Math.round(((originalPrice - offerPrice) / originalPrice) * 100)
-: 0;
+  /* ============================= */
+  /* CART */
+  /* ============================= */
 
-const idStr = food._id || "";
-const hash = idStr
-.split("")
-.reduce((a, b) => {
-a = (a << 5) - a + b.charCodeAt(0);
-return a & a;
-}, 0);
+  const cartItem = cart.find(
+    (item) => item._id === food._id
+  );
 
-const rating = food.rating || ((Math.abs(hash) % 2) + 3.5);
-const numReviews = food.numReviews || (Math.abs(hash) % 400 + 20);
+  /* ============================= */
+  /* PRICE */
+  /* ============================= */
 
-const stockCount =
-food.stock !== undefined ? food.stock : Math.abs(hash) % 100 + 5;
+  const originalPrice = food.price || 0;
+  const offerPrice = food.offerPrice || originalPrice;
 
-const isOutOfStock = stockCount <= 0;
+  const discountPercent =
+    originalPrice > offerPrice
+      ? Math.round(
+          ((originalPrice - offerPrice) / originalPrice) * 100
+        )
+      : 0;
 
-const handleWishlistClick = (e) => {
-e.stopPropagation();
-e.preventDefault();
-if (toggleWishlist) toggleWishlist(food);
-};
+  /* ============================= */
+  /* RATING */
+  /* ============================= */
 
-return (
-<div className="product-card">
+  const idStr = food._id || "";
 
-<div className="wishlist-icon" onClick={handleWishlistClick}>
-<FiHeart
-size={22}
-color={isWishlisted ? "var(--secondary)" : "var(--text-light)"}
-fill={isWishlisted ? "var(--secondary)" : "none"}
-/>
-</div>
+  const hash = idStr
+    .split("")
+    .reduce((a, b) => {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
 
-{discountPercent > 0 && !isOutOfStock && (
-<div className="discount-badge">
-{discountPercent}% OFF
-</div>
-)}
+  const rating =
+    food.rating || ((Math.abs(hash) % 2) + 3.5);
 
-{isOutOfStock && (
-<div className="discount-badge" style={{ background: "#B12704" }}>
-OUT OF STOCK
-</div>
-)}
+  const numReviews =
+    food.numReviews ||
+    (Math.abs(hash) % 400 + 20);
 
-<Link
-to={`/product/${food._id}`}
-className="product-img-wrapper"
-style={{ cursor: "pointer" }}
->
-<img
-src={imageUrl}
-alt={food.name}
-className="product-img"
-loading="lazy"
-/>
-</Link>
+  /* ============================= */
+  /* STOCK */
+  /* ============================= */
 
-<div className="product-info">
+  const stockCount =
+    food.stock !== undefined
+      ? food.stock
+      : Math.abs(hash) % 100 + 5;
 
-<Link to={`/product/${food._id}`} style={{ textDecoration: "none" }}>
-<h3 className="product-title" title={food.name}>
-{food.name}
-</h3>
-</Link>
+  const isOutOfStock = stockCount <= 0;
 
-<div className="product-rating">
-<span className="stars">
-{[1, 2, 3, 4, 5].map((star) => (
-<FiStar
-key={star}
-size={14}
-color={
-star <= Math.round(rating)
-? "var(--secondary)"
-: "#ccc"
-}
-fill={
-star <= Math.round(rating)
-? "var(--secondary)"
-: "none"
-}
-/>
-))}
-</span>
-<span className="review-count">{numReviews}</span>
-</div>
+  /* ============================= */
+  /* WISHLIST */
+  /* ============================= */
 
-<div className="price-container">
-<span className="offer-price">₹{offerPrice}</span>
-{discountPercent > 0 && (
-<span className="original-price">
-M.R.P: ₹{originalPrice}
-</span>
-)}
-</div>
+  const handleWishlistClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
 
-<div
-className="product-actions"
-style={{ opacity: isOutOfStock ? 0.6 : 1 }}
->
+    if (toggleWishlist) {
+      toggleWishlist(food);
+    }
+  };
 
-{cartItem ? (
-<div className="qty-controls">
+  /* ============================= */
+  /* UI */
+  /* ============================= */
 
-<button
-className="qty-btn"
-onClick={() => updateCartQuantity(food._id, -1)}
-disabled={cartItem.qty <= 1}
->
-<FiMinus size={16} />
-</button>
+  return (
+    <div className="product-card">
 
-<span className="qty-value">{cartItem.qty}</span>
+      <div
+        className="wishlist-icon"
+        onClick={handleWishlistClick}
+      >
+        <FiHeart
+          size={22}
+          color={
+            isWishlisted
+              ? "var(--secondary)"
+              : "var(--text-light)"
+          }
+          fill={
+            isWishlisted
+              ? "var(--secondary)"
+              : "none"
+          }
+        />
+      </div>
 
-<button
-className="qty-btn"
-onClick={() => updateCartQuantity(food._id, 1)}
-disabled={isOutOfStock}
->
-<FiPlus size={16} />
-</button>
+      {discountPercent > 0 && !isOutOfStock && (
+        <div className="discount-badge">
+          {discountPercent}% OFF
+        </div>
+      )}
 
-</div>
-) : (
-<button
-className="cart-btn"
-onClick={() => !isOutOfStock && addToCart(food)}
-disabled={isOutOfStock}
-style={{
-cursor: isOutOfStock ? "not-allowed" : "pointer",
-}}
->
-{isOutOfStock ? "Out of Stock" : "Add to Cart"}
-</button>
-)}
+      {isOutOfStock && (
+        <div
+          className="discount-badge"
+          style={{ background: "#B12704" }}
+        >
+          OUT OF STOCK
+        </div>
+      )}
 
-</div>
+      <Link
+        to={`/product/${food._id}`}
+        className="product-img-wrapper"
+        style={{ cursor: "pointer" }}
+      >
+        <img
+          src={imageUrl}
+          alt={food.name}
+          className="product-img"
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.src =
+              "https://images.unsplash.com/photo-1542838132-92c53300491e?w=500";
+          }}
+        />
+      </Link>
 
-</div>
+      <div className="product-info">
 
-</div>
-);
+        <Link
+          to={`/product/${food._id}`}
+          style={{ textDecoration: "none" }}
+        >
+          <h3
+            className="product-title"
+            title={food.name}
+          >
+            {food.name}
+          </h3>
+        </Link>
+
+        <div className="product-rating">
+
+          <span className="stars">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <FiStar
+                key={star}
+                size={14}
+                color={
+                  star <= Math.round(rating)
+                    ? "var(--secondary)"
+                    : "#ccc"
+                }
+                fill={
+                  star <= Math.round(rating)
+                    ? "var(--secondary)"
+                    : "none"
+                }
+              />
+            ))}
+          </span>
+
+          <span className="review-count">
+            {numReviews}
+          </span>
+
+        </div>
+
+        <div className="price-container">
+
+          <span className="offer-price">
+            ₹{offerPrice}
+          </span>
+
+          {discountPercent > 0 && (
+            <span className="original-price">
+              M.R.P: ₹{originalPrice}
+            </span>
+          )}
+
+        </div>
+
+        <div
+          className="product-actions"
+          style={{
+            opacity: isOutOfStock ? 0.6 : 1,
+          }}
+        >
+
+          {cartItem ? (
+
+            <div className="qty-controls">
+
+              <button
+                className="qty-btn"
+                onClick={() =>
+                  updateCartQuantity(food._id, -1)
+                }
+                disabled={cartItem.qty <= 1}
+              >
+                <FiMinus size={16} />
+              </button>
+
+              <span className="qty-value">
+                {cartItem.qty}
+              </span>
+
+              <button
+                className="qty-btn"
+                onClick={() =>
+                  updateCartQuantity(food._id, 1)
+                }
+                disabled={isOutOfStock}
+              >
+                <FiPlus size={16} />
+              </button>
+
+            </div>
+
+          ) : (
+
+            <button
+              className="cart-btn"
+              onClick={() =>
+                !isOutOfStock && addToCart(food)
+              }
+              disabled={isOutOfStock}
+              style={{
+                cursor: isOutOfStock
+                  ? "not-allowed"
+                  : "pointer",
+              }}
+            >
+              {isOutOfStock
+                ? "Out of Stock"
+                : "Add to Cart"}
+            </button>
+
+          )}
+
+        </div>
+
+      </div>
+
+    </div>
+  );
 }
 
 export default FoodCard;
