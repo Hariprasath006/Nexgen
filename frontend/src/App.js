@@ -82,7 +82,7 @@ function App() {
         }
       });
     }
-  }, [cart, user]);
+ }, [cart, user, cartKey]);
 
   /* SAVE WISHLIST & SYNC BACKEND */
   useEffect(() => {
