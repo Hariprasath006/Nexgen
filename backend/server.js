@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const connectDB = require("./config/db");
 
@@ -28,7 +29,7 @@ app.use(express.json());
 /* STATIC FILES (UPLOADS) */
 /* ============================= */
 
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 /* ============================= */
 /* TEST ROUTE */
@@ -52,6 +53,7 @@ app.use("/api/users", userRoutes);
 
 app.use((err, req, res, next) => {
   console.error("Server Error:", err);
+
   res.status(500).json({
     success: false,
     message: "Internal Server Error"
