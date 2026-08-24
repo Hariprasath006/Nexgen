@@ -95,7 +95,7 @@ function App() {
         console.error("Wishlist sync failed", err);
       });
     }
-  }, [wishlist, user]);
+ }, [wishlist, user, wishlistKey]);
 
   /* UPDATE CART QUANTITY */
   const updateCartQuantity = (id, amount) => {
